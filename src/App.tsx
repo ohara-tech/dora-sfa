@@ -1,19 +1,18 @@
-import { useState } from 'react'
-// Firebaseから必要な魔法（関数）をインポート
+import { useState, useEffect } from 'react'
 import { initializeApp } from "firebase/app";
-import { getAuth, GoogleAuthProvider, signInWithPopup } from "firebase/auth";
+import { getAuth, GoogleAuthProvider, signInWithPopup, onAuthStateChanged } from "firebase/auth";
 
-// 1. 先ほどの画面に表示されている設定値をここに貼り付けます
+// 1. Firebaseの設定（画像17枚目の内容を反映しています）
 const firebaseConfig = {
-  apiKey: "AIzaSyC...", // あなたの画面の値をコピーしてください
+  apiKey: "AIzaSyCQrP3Lvkvm8vcZpqjSjtLLHW1ge2luNDc",
   authDomain: "dora-sfa.firebaseapp.com",
   projectId: "dora-sfa",
   storageBucket: "dora-sfa.firebasestorage.app",
   messagingSenderId: "462643096222",
-  appId: "1:462643096222:web:..."
+  appId: "1:462643096222:web:272a5a72d839c21c2a98f1",
+  measurementId: "G-9BVQ2MW5HQ"
 };
 
-// Firebaseの初期化
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const provider = new GoogleAuthProvider();
@@ -21,33 +20,41 @@ const provider = new GoogleAuthProvider();
 function App() {
   const [user, setUser] = useState<any>(null);
 
-  // Googleログインを実行する関数
+  // ログイン状態を監視
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
+      setUser(currentUser);
+    });
+    return () => unsubscribe();
+  }, []);
+
   const login = () => {
-    signInWithPopup(auth, provider)
-      .then((result) => {
-        setUser(result.user);
-        console.log("ログイン成功:", result.user.displayName);
-      })
-      .catch((error) => console.error("ログインエラー:", error));
+    signInWithPopup(auth, provider).catch(err => console.error(err));
   };
 
+  const logout = () => auth.signOut();
+
   return (
-    <div style={{ padding: '40px', textAlign: 'center', fontFamily: 'sans-serif' }}>
-      <h1>ドラ・スファ：認証版</h1>
+    <div style={{ padding: '40px', textAlign: 'center', backgroundColor: '#f0f2f5', minHeight: '100vh', fontFamily: 'sans-serif' }}>
+      <h1 style={{ color: '#1a73e8' }}>ドラ・スファ：認証版</h1>
       
       {!user ? (
-        <div>
-          <p>スプレッドシートのデータを見るにはログインが必要です</p>
-          <button onClick={login} style={{ padding: '10px 20px', fontSize: '16px', cursor: 'pointer' }}>
+        <div style={{ background: 'white', padding: '30px', borderRadius: '15px', maxWidth: '400px', margin: '0 auto', boxShadow: '0 4px 6px rgba(0,0,0,0.1)' }}>
+          <p>閲覧には「@doraever.jp」でのログインが必要です</p>
+          <button onClick={login} style={{ backgroundColor: '#4285f4', color: 'white', border: 'none', padding: '12px 24px', borderRadius: '5px', fontSize: '16px', cursor: 'pointer', fontWeight: 'bold' }}>
             Googleでログイン
           </button>
         </div>
       ) : (
-        <div style={{ background: 'white', padding: '20px', borderRadius: '10px', boxShadow: '0 2px 4px rgba(0,0,0,0.1)' }}>
-          <p>ようこそ、{user.displayName} さん！</p>
-          <p style={{ color: 'green' }}>✔ 社員認証済み</p>
-          <hr />
-          <p>※次は、このログイン情報を使ってGASを叩く設定をします</p>
+        <div style={{ background: 'white', padding: '30px', borderRadius: '15px', maxWidth: '500px', margin: '0 auto', boxShadow: '0 4px 6px rgba(0,0,0,0.1)' }}>
+          <p style={{ fontSize: '1.2rem' }}>ようこそ、<strong>{user.displayName}</strong> さん！</p>
+          <p style={{ color: '#28a745', fontWeight: 'bold' }}>● 社員認証済み</p>
+          <p style={{ fontSize: '0.9rem', color: '#666' }}>{user.email}</p>
+          <hr style={{ margin: '20px 0', border: 'none', borderTop: '1px solid #eee' }} />
+          <p>※次は、この情報をGASへ送る設定をします</p>
+          <button onClick={logout} style={{ background: 'none', border: 'none', color: '#d93025', cursor: 'pointer', textDecoration: 'underline' }}>
+            ログアウト
+          </button>
         </div>
       )}
     </div>
