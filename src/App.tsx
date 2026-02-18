@@ -3,7 +3,7 @@ import { useState, useEffect } from 'react'
 function App() {
   const [data, setData] = useState({ message: "読み込み中...", timestamp: "" });
   // ↓ ここに自分のGASのウェブアプリURLを貼り付けてください
-  const GAS_URL = "https://script.google.com/macros/s/AKfycbwUKl8EkidZyI2ljJ6gL3hvXOiqI0wnOh2-sMunLHRcEDwiDacCCdwdxk0rj8WN03uM/exec";
+  const GAS_URL = "https://script.google.com/macros/library/d/1nEg_DR2519Z5nHzW2jPCY96isXl5FtA9LNaUwCSuGhwmr2MiEur3fnZk/4";
 
   useEffect(() => {
     fetch(GAS_URL, { redirect: "follow", mode: "cors" })
