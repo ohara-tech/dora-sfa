@@ -28,6 +28,12 @@ function App() {
     return () => unsubscribe();
   }, []);
 
+  // 例：案件データを取得する場合の fetch
+const url = `${GAS_URL}?idToken=${token}&action=getCustomers`;
+fetch(url)
+  .then(res => res.json())
+  .then(data => setCustomers(data));
+
   const login = () => {
     signInWithPopup(auth, provider).catch(err => console.error(err));
   };
