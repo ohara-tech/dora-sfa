@@ -56,37 +56,61 @@ function App() {
   };
 
   return (
-    <div style={{ padding: '40px', textAlign: 'center', backgroundColor: '#f0f2f5', minHeight: '100vh', fontFamily: 'sans-serif' }}>
-      <h1 style={{ color: '#1a73e8' }}>ドラ・スファ：データ連携版</h1>
+    <div style={{ padding: '40px 20px', backgroundColor: '#f0f2f5', minHeight: '100vh', fontFamily: 'sans-serif' }}>
+      {/* タイトルは中央 */}
+      <h1 style={{ color: '#1a73e8', textAlign: 'center', marginBottom: '30px' }}>ドラ・スファ：データ連携版</h1>
       
       {!user ? (
-        <div style={{ background: 'white', padding: '30px', borderRadius: '15px', maxWidth: '400px', margin: '0 auto', boxShadow: '0 4px 6px rgba(0,0,0,0.1)' }}>
+        // ログイン前
+        <div style={{ background: 'white', padding: '30px', borderRadius: '15px', maxWidth: '400px', margin: '0 auto', boxShadow: '0 4px 6px rgba(0,0,0,0.1)', textAlign: 'center' }}>
           <p>閲覧には「@doraever.jp」でのログインが必要です</p>
           <button onClick={login} style={{ backgroundColor: '#4285f4', color: 'white', border: 'none', padding: '12px 24px', borderRadius: '5px', fontSize: '16px', cursor: 'pointer', fontWeight: 'bold' }}>
             Googleでログイン
           </button>
         </div>
       ) : (
-        <div style={{ maxWidth: '600px', margin: '0 auto' }}>
-          <div style={{ background: 'white', padding: '20px', borderRadius: '15px', marginBottom: '20px', boxShadow: '0 2px 4px rgba(0,0,0,0.1)' }}>
-            <p>ようこそ、<strong>{user.displayName}</strong> さん</p>
+        // ログイン後：最大幅を広げて中央に配置
+        <div style={{ maxWidth: '1000px', margin: '0 auto' }}>
+          {/* ユーザー情報：右上にコンパクトに */}
+          <div style={{ background: 'white', padding: '15px 25px', borderRadius: '15px', marginBottom: '20px', boxShadow: '0 2px 4px rgba(0,0,0,0.1)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+            <p style={{ margin: 0 }}>ようこそ、<strong>{user.displayName}</strong> さん</p>
             <button onClick={logout} style={{ color: '#d93025', cursor: 'pointer', border: 'none', background: 'none', textDecoration: 'underline' }}>ログアウト</button>
           </div>
 
+          {/* 案件リスト：左揃えで大きく見せる */}
           <div style={{ background: 'white', padding: '30px', borderRadius: '15px', boxShadow: '0 4px 6px rgba(0,0,0,0.1)' }}>
-            <h3>案件リスト（GAS連携テスト）</h3>
+            <h3 style={{ borderBottom: '2px solid #1a73e8', paddingBottom: '10px', marginBottom: '20px' }}>案件リスト（GAS連携テスト）</h3>
+            
             {loading ? (
-              <p>読み込み中...</p>
+              <p>データを読み込んでいます...</p>
             ) : customers && customers.length > 0 ? (
-              <ul style={{ textAlign: 'left' }}>
-                {customers.slice(0, 5).map((cust: any, index: number) => (
-                  <li key={index} style={{ marginBottom: '10px' }}>
-                    <strong>{cust.name || '名称不明'}</strong> - 担当: {cust.assignedStaff || '未設定'}
-                  </li>
-                ))}
-              </ul>
+              <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left' }}>
+                <thead>
+                  <tr style={{ backgroundColor: '#f8f9fa' }}>
+                    <th style={{ padding: '12px', borderBottom: '2px solid #dee2e6' }}>案件名</th>
+                    <th style={{ padding: '12px', borderBottom: '2px solid #dee2e6' }}>担当者</th>
+                    <th style={{ padding: '12px', borderBottom: '2px solid #dee2e6' }}>ステータス</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {customers.map((cust: any, index: number) => (
+                    <tr key={index} style={{ borderBottom: '1px solid #eee' }}>
+                      <td style={{ padding: '12px' }}>{cust.name}</td>
+                      <td style={{ padding: '12px' }}>{cust.assignedStaff}</td>
+                      <td style={{ padding: '12px' }}>
+                        <span style={{ backgroundColor: '#e8f0fe', color: '#1a73e8', padding: '4px 8px', borderRadius: '4px', fontSize: '0.85rem' }}>
+                          {cust.probability || '検討中'}
+                        </span>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
             ) : (
-              <p>データが見つかりませんでした。</p>
+              <div style={{ textAlign: 'center', padding: '40px', color: '#666' }}>
+                <p>現在表示できるデータがありません。</p>
+                <p style={{ fontSize: '0.8rem' }}>※権限設定が完了するとここに一覧が表示されます</p>
+              </div>
             )}
           </div>
         </div>
