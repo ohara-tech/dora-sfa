@@ -6,7 +6,7 @@ function App() {
   const GAS_URL = "https://script.google.com/macros/s/AKfycbwUKl8EkidZyI2ljJ6gL3hvXOiqI0wnOh2-sMunLHRcEDwiDacCCdwdxk0rj8WN03uM/exec";
 
   useEffect(() => {
-    fetch(GAS_URL)
+    fetch(GAS_URL, { redirect: "follow", mode: "cors" })
       .then(res => res.json())
       .then(json => setData(json))
       .catch(err => setData({ message: "エラーが発生しました", timestamp: err.toString() }));
