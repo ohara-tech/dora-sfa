@@ -1,0 +1,15 @@
+// Vercel Serverless Function
+export default async function handler(req, res) {
+  const { idToken, action } = req.query;
+  const GAS_URL = "https://script.google.com/macros/s/AKfycbwEzv8H4igu5J147rkEVmqJfdzBvtKNJiNbF01DyrXacIiQco-zRkyzNCJNGxRSnihd/exec";
+
+  try {
+    const response = await fetch(`${GAS_URL}?idToken=${idToken}&action=${action}`);
+    const data = await response.json();
+    
+    // ブラウザへデータを返す
+    res.status(200).json(data);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+}
