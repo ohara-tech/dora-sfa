@@ -18,7 +18,7 @@ const auth = getAuth(app);
 const provider = new GoogleAuthProvider();
 
 // ★ 自分のGASのウェブアプリURLをここに貼り付けてください
-const GAS_URL = "https://script.google.com/macros/s/AKfycbzneIkwpYaUIfZZvaOmwTXFWOBCFJr7He-AYMlBN3_XbbKMH8RFChQMt8WYDlMlAnXm/exec";
+const GAS_URL = "https://script.google.com/macros/s/AKfycbwEzv8H4igu5J147rkEVmqJfdzBvtKNJiNbF01DyrXacIiQco-zRkyzNCJNGxRSnihd/exec";
 
 function App() {
   const [user, setUser] = useState<any>(null);
