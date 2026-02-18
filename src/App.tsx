@@ -2,7 +2,6 @@ import { useState, useEffect } from 'react'
 import { initializeApp } from "firebase/app";
 import { getAuth, GoogleAuthProvider, signInWithPopup, onAuthStateChanged, getIdToken } from "firebase/auth";
 
-// 1. Firebaseの設定
 const firebaseConfig = {
   apiKey: "AIzaSyCQrP3Lvkvm8vcZpqjSjtLLHW1ge2luNDc",
   authDomain: "dora-sfa.firebaseapp.com",
@@ -17,34 +16,28 @@ const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const provider = new GoogleAuthProvider();
 
-// ★ 自分のGASのウェブアプリURLをここに貼り付けてください
-const GAS_URL = "https://script.google.com/macros/s/AKfycbwEzv8H4igu5J147rkEVmqJfdzBvtKNJiNbF01DyrXacIiQco-zRkyzNCJNGxRSnihd/exec";
-
 function App() {
   const [user, setUser] = useState<any>(null);
-  const [customers, setCustomers] = useState<any[]>([]); // 案件データの入れ物
+  const [customers, setCustomers] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
 
-  // ログイン状態を監視
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
       setUser(currentUser);
       if (currentUser) {
-        // ログインしたら自動でデータを取得しにいく
         fetchData(currentUser);
       }
     });
     return () => unsubscribe();
   }, []);
 
-  // GASからデータを取得する関数
+  // GASからデータを取得する関数（中継URLを使用）
   const fetchData = async (currentUser: any) => {
     setLoading(true);
     try {
-      // 証明書（トークン）を取得
       const token = await getIdToken(currentUser);
-      // action=getCustomers を指定して呼び出す
-      const url = `${GAS_URL}?idToken=${token}&action=getCustomers`;
+      // ★修正：GASのURLを直接書かず、相対パス「/api/gas」を使用します
+      const url = `/api/gas?idToken=${token}&action=getCustomers`;
       
       const res = await fetch(url);
       const data = await res.json();
@@ -84,12 +77,11 @@ function App() {
             <h3>案件リスト（GAS連携テスト）</h3>
             {loading ? (
               <p>読み込み中...</p>
-            ) : customers.length > 0 ? (
+            ) : customers && customers.length > 0 ? (
               <ul style={{ textAlign: 'left' }}>
-                {/* 最初の3件だけ表示してみるテスト */}
-                {customers.slice(0, 3).map((cust: any, index: number) => (
+                {customers.slice(0, 5).map((cust: any, index: number) => (
                   <li key={index} style={{ marginBottom: '10px' }}>
-                    <strong>{cust.name}</strong> - 担当: {cust.assignedStaff}
+                    <strong>{cust.name || '名称不明'}</strong> - 担当: {cust.assignedStaff || '未設定'}
                   </li>
                 ))}
               </ul>
